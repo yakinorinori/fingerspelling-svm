@@ -31,8 +31,15 @@ if len(X) != len(Y):
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.01, shuffle=True, stratify=Y)
 
 
+# クラスごとのデータ数に応じた重み（少ないクラスほど重い）
+#   重み = 全データ数 / (クラス数 × そのクラスのデータ数)
+classes, counts = np.unique(Y_train, return_counts=True)
+print("クラスごとのデータ数と重み:")
+for c, n in zip(classes, counts):
+    print(f"  {c}: {n} 件, 重み {len(Y_train) / (len(classes) * n):.3f}")
+
 # SVMモデルの訓練
-svc = SVC(probability=True)
+svc = SVC(probability=True, class_weight="balanced")
 svc.fit(X_train,Y_train)
 
 # テストデータでの予測と評価
